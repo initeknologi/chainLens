@@ -6,6 +6,16 @@ ChainLens turns balances, transactions, approvals, and contract metadata into tr
 
 > ChainLens is an analytics tool, not a wallet, trading service, or security guarantee.
 
+## Demo
+
+These screens are from a local run (`pnpm dev`). The portfolio uses the public example `vitalik.eth` on Ethereum and Base. Values change with live chain data.
+
+![ChainLens home page](docs/images/home.png)
+
+![Portfolio for vitalik.eth](docs/images/portfolio.png)
+
+![Blockchain explainer](docs/images/explainer.png)
+
 ## Features
 
 - Multi-chain balances and allocation across Ethereum, Base, BNB Smart Chain, and Polygon
