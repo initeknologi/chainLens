@@ -1,0 +1,27 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/chainlens?sslmode=disable
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @chainlens/database generate
+      - run: pnpm --filter @chainlens/config build
+      - run: pnpm --filter @chainlens/shared-types build
+      - run: pnpm --filter @chainlens/blockchain test
+      - run: pnpm --filter @chainlens/blockchain build
+      - run: pnpm --filter @chainlens/database build

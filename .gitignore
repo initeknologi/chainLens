@@ -1,0 +1,17 @@
+node_modules
+dist
+.next
+.next-web3
+.turbo
+coverage
+.env
+.env.*
+!.env.example
+data
+*.log
+packages/database/src/generated
+.DS_Store
+.cursor
+.cursorrules
+AGENTS.md
+**/*.canvas.tsx

@@ -1,0 +1,22 @@
+{
+  "name": "@chainlens/blockchain",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@chainlens/config": "workspace:*",
+    "@chainlens/shared-types": "workspace:*",
+    "viem": "^2.37.6"
+  },
+  "devDependencies": {
+    "@types/node": "24.3.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}
