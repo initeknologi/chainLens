@@ -1,5 +1,18 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalPassThroughEnv": [
+    "DATABASE_URL",
+    "REDIS_URL",
+    "API_PORT",
+    "WEB_ORIGIN",
+    "NEXT_PUBLIC_API_URL",
+    "OPENAI_API_KEY",
+    "OPENAI_MODEL",
+    "ETH_RPC_URL",
+    "BASE_RPC_URL",
+    "BSC_RPC_URL",
+    "POLYGON_RPC_URL"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
