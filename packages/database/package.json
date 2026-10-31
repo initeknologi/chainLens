@@ -1,0 +1,24 @@
+{
+  "name": "@chainlens/database",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "generate": "prisma generate",
+    "push": "prisma db push --skip-generate --accept-data-loss",
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput"
+  },
+  "dependencies": {
+    "@chainlens/blockchain": "workspace:*",
+    "@chainlens/config": "workspace:*",
+    "@chainlens/shared-types": "workspace:*",
+    "@prisma/client": "6.19.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.3.0",
+    "prisma": "6.19.3",
+    "typescript": "^5.9.2"
+  }
+}

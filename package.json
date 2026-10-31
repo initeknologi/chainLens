@@ -1,0 +1,33 @@
+{
+  "name": "chainlens-web3-intelligence",
+  "private": true,
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "pnpm db:generate && turbo build",
+    "test": "pnpm --filter @chainlens/blockchain test",
+    "db:generate": "pnpm --filter @chainlens/database generate",
+    "db:push": "pnpm --filter @chainlens/database push"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.8",
+    "typescript": "^5.9.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@prisma/client",
+      "@prisma/engines",
+      "esbuild",
+      "msgpackr-extract",
+      "prisma"
+    ]
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "0.5.13",
+    "@electric-sql/pglite-socket": "0.2.16"
+  }
+}

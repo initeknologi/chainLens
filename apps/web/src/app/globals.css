@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(900px 500px at 65% -20%, rgba(119, 92, 255, 0.18), transparent 60%),
+    radial-gradient(700px 500px at 100% 70%, rgba(50, 214, 255, 0.06), transparent 60%),
+    #050610;
+  color: #f3f5ff;
+}
+
+body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background-image: linear-gradient(rgba(140, 150, 210, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(140, 150, 210, 0.022) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: #775cff;
+  color: white;
+}
+
+* {
+  scrollbar-color: rgba(119, 92, 255, 0.45) transparent;
+  scrollbar-width: thin;
+}
+
+@layer components {
+  .glass-panel {
+    @apply rounded-2xl border border-line bg-panel/75 shadow-panel backdrop-blur-xl;
+  }
+
+  .data-card {
+    @apply rounded-2xl border border-line bg-panel/65 transition duration-200 hover:border-signal/35;
+  }
+
+  .eyebrow {
+    @apply text-[10px] font-semibold uppercase tracking-[0.2em] text-muted;
+  }
+
+  .metric-value {
+    @apply font-mono text-2xl font-medium tracking-tight text-text;
+  }
+
+  .web3-button {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-signal px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#8b73ff] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .web3-button-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-white/[0.025] px-4 py-2.5 text-sm text-muted transition hover:border-signal/40 hover:text-text;
+  }
+
+  .status-dot {
+    @apply inline-block h-1.5 w-1.5 rounded-full bg-success shadow-[0_0_12px_rgba(66,230,164,0.8)];
+  }
+}

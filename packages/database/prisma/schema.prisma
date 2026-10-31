@@ -1,0 +1,237 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  createdAt    DateTime      @default(now()) @map("created_at")
+  note         String        @default("Public-address analysis does not require an account.")
+  displayName  String        @default("Local profile") @map("display_name")
+  tokenHash    String?       @unique @map("token_hash")
+  preferences  Json?
+  savedWallets SavedWallet[]
+
+  @@map("users")
+}
+
+model SavedWallet {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  address   String
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, address])
+  @@index([address])
+  @@map("saved_wallets")
+}
+
+model ProductEvent {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([name, createdAt])
+  @@map("product_events")
+}
+
+model Network {
+  chainId      Int     @id @map("chain_id")
+  name         String
+  slug         String  @unique
+  nativeSymbol String  @map("native_symbol")
+  explorerUrl  String  @map("explorer_url")
+  wallets      Wallet[]
+  tokens       Token[]
+
+  @@map("networks")
+}
+
+model Wallet {
+  id            String    @id @default(cuid())
+  address       String
+  chainId       Int       @map("chain_id")
+  ensName       String?   @map("ens_name")
+  lastIndexedAt DateTime? @map("last_indexed_at")
+  network       Network   @relation(fields: [chainId], references: [chainId])
+  balances      WalletBalance[]
+  approvals     WalletApproval[]
+
+  @@unique([address, chainId])
+  @@index([address])
+  @@map("wallets")
+}
+
+model Token {
+  id       String          @id @default(cuid())
+  chainId  Int             @map("chain_id")
+  address  String
+  symbol   String
+  name     String
+  decimals Int
+  network  Network         @relation(fields: [chainId], references: [chainId])
+  balances WalletBalance[]
+
+  @@unique([chainId, address])
+  @@map("tokens")
+}
+
+model WalletBalance {
+  id          String   @id @default(cuid())
+  walletId    String   @map("wallet_id")
+  tokenId     String   @map("token_id")
+  rawBalance  String   @map("raw_balance")
+  priceUsd    String?  @map("price_usd")
+  priceSource String?  @map("price_source")
+  capturedAt  DateTime @default(now()) @map("captured_at")
+  wallet      Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  token       Token    @relation(fields: [tokenId], references: [id])
+
+  @@unique([walletId, tokenId])
+  @@map("wallet_balances")
+}
+
+model Transaction {
+  id               String              @id @default(cuid())
+  chainId          Int                 @map("chain_id")
+  hash             String
+  walletAddress    String              @map("wallet_address")
+  blockNumber      String              @map("block_number")
+  timestamp        DateTime
+  fromAddress      String              @map("from_address")
+  toAddress        String?             @map("to_address")
+  status           String
+  txType           String              @map("tx_type")
+  method           String?
+  summary          String
+  valueRaw         String              @map("value_raw")
+  valueDisplay     String              @map("value_display")
+  nativeSymbol     String              @map("native_symbol")
+  feeRaw           String?             @map("fee_raw")
+  feeDisplay       String?             @map("fee_display")
+  feeUsd           String?             @map("fee_usd")
+  gasUsed          String?             @map("gas_used")
+  gasPrice         String?             @map("gas_price")
+  direction        String
+  counterparty     String?
+  contractName     String?             @map("contract_name")
+  contractVerified Boolean?            @map("contract_verified")
+  decoded          Json?
+  inputData        String              @map("input_data") @db.Text
+  events           TransactionEvent[]
+
+  @@unique([chainId, hash, walletAddress])
+  @@index([walletAddress, timestamp])
+  @@map("transactions")
+}
+
+model TransactionEvent {
+  id            String      @id @default(cuid())
+  transactionId String      @map("transaction_id")
+  logIndex      Int         @map("log_index")
+  address       String
+  eventName     String?     @map("event_name")
+  decoded       Json?
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  @@unique([transactionId, logIndex])
+  @@map("transaction_events")
+}
+
+model Contract {
+  id         String         @id @default(cuid())
+  chainId    Int            @map("chain_id")
+  address    String
+  name       String?
+  isContract Boolean?       @map("is_contract")
+  verified   Boolean?
+  proxyType        String?        @map("proxy_type")
+  creator          String?
+  creationTxHash   String?        @map("creation_tx_hash")
+  ownerAddress     String?        @map("owner_address")
+  abi              Json?
+  risks            ContractRisk[]
+
+  @@unique([chainId, address])
+  @@map("contracts")
+}
+
+model ContractRisk {
+  id          String   @id @default(cuid())
+  contractId  String   @map("contract_id")
+  signalId    String   @map("signal_id")
+  level       String
+  severity    String   @default("informational")
+  title       String
+  explanation String
+  evidence    Json
+  limitations Json
+  contract    Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@map("contract_risks")
+}
+
+model WalletApproval {
+  id               String  @id @default(cuid())
+  walletId         String  @map("wallet_id")
+  chainId          Int     @map("chain_id")
+  tokenAddress     String  @map("token_address")
+  tokenSymbol      String? @map("token_symbol")
+  spender          String
+  allowanceRaw     String  @map("allowance_raw")
+  allowanceDisplay String? @map("allowance_display")
+  unlimited        Boolean
+  source           String
+  txHash           String? @map("tx_hash")
+  asOf             String  @default("historical") @map("as_of")
+  observedAtBlock  String? @map("observed_at_block")
+  risk             Json
+  wallet           Wallet  @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@unique([walletId, tokenAddress, spender])
+  @@map("wallet_approvals")
+}
+
+model PortfolioSnapshot {
+  id         String   @id @default(cuid())
+  address    String
+  capturedAt DateTime @default(now()) @map("captured_at")
+  totalUsd   String?  @map("total_usd")
+  allocation Json
+  coverage   Json
+
+  @@index([address, capturedAt])
+  @@map("portfolio_snapshots")
+}
+
+model AnalysisReport {
+  id        String   @id @default(cuid())
+  kind      String
+  subjectId String   @map("subject_id")
+  question  String?
+  answer    String?
+  payload   Json
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([kind, subjectId, createdAt])
+  @@map("analysis_reports")
+}
+
+model IndexJob {
+  id        String   @id @default(cuid())
+  address   String
+  status    String   @default("pending")
+  attempts  Int      @default(0)
+  lastError String?  @map("last_error")
+  runAfter  DateTime @default(now()) @map("run_after")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([status, runAfter])
+  @@map("index_jobs")
+}
